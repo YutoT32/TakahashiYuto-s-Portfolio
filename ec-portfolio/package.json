@@ -1,0 +1,13 @@
+{
+    "name": "ec-portfolio",
+    "version": "1.0.0",
+    "private": true,
+    "type": "commonjs",
+    "scripts": {
+        "dev": "node src/server.js",
+        "start": "node src/server.js"
+    },
+    "dependencies": {
+        "express": "^4.19.2"
+    }
+}

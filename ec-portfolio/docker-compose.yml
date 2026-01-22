@@ -2,14 +2,14 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       PORT: "3000"
       DB_HOST: "db"
       DB_PORT: "3306"
       DB_USER: "app"
       DB_PASSWORD: "apppass"
-      DB_NAME: "ec_portfolio"
+      DB_NAME: "ec"
       SESSION_SECRET: "change-me"
     depends_on:
       - db
@@ -18,17 +18,18 @@ services:
       - /app/node_modules
     command: npm run dev
 
-db:
-  image: mysql:8.0
-  environment:
-    MYSQL_DATABASE: ec_portfolio
-    MYSQL_USER: app
-    MYSQL_PASSWORD: apppass
-    MYSQL_ROOT_PASSWORD: rootpass
-  ports:
-    - "3306:3306"
-  volumes:
-    - dbdata:/var/lib/mysql
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ec
+      MYSQL_USER: app
+      MYSQL_PASSWORD: apppass
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
 
 volumes:
   dbdata:
