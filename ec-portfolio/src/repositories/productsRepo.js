@@ -7,4 +7,11 @@ async function findAllProducts(){
     return rows;
 }
 
-module.exports = { findAllProducts };
+async function findProductById(id){
+    const [rows] = await pool.query(
+        "SELECT id, name, description, price, stock, image_url FROM products WHERE id = ?", [id]
+    );
+    return rows[0] || null;
+}
+
+module.exports = { findAllProducts, findProductById };

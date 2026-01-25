@@ -2,7 +2,7 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8"/>
-        <title>TakahashiYuto's Portfolio</title>
+        <title>products</title>
         <link rel="stylesheet" href="/public/css/style.css"/>
     </head>
     <body>
@@ -13,7 +13,7 @@
                 <a href="/">TakahashiYuto's Portfolio</a>
                 </div>
                 <div class="nav-items">
-                <a href="/index">一覧</a>
+                <a href="/products">一覧</a>
                 <a href="/cart">カート</a>
                 <a href="/login">ログイン</a>
                 </div>
@@ -43,19 +43,21 @@
                 <h2>商品一覧</h2>
 
                 <!-- JavascriptのforEachでProductsを表示 -->
+                <div class="products-grid">
                 <% products.forEach(p => { %>
-                    <article class="card">
-                        <div class="card-body">
+                        <div class="product-card">
                             <h2 class="card-title"><%= p.name %></h2>
-                            <p class="muted"><%= p.description || "" %></p>
+                            <p class="muted">詳細: <%= p.description || "" %></p>
+                            <div>価格: ¥<%= p.price %></div>
+                            <div class="<%= p.stock > 0 ? 'ok' : 'ng' %>">在庫: <%= p.stock %></div>
+                            <form class="add-form" action="/cart/add" method="POST">
+                                <input type="hidden" name="productId" value="<%= p.id %>">
+                                <input class="qty" type="number", name="qty" value="1" min="1" max="99">
+                                <button type="submit" <%= p.stock <= 0 ? "disabled" : "" %>Add</button>
+                            </form>
                         </div>
-                        <div class="card-footer">
-                            <div>¥<%= p.price %></div>
-                            <div class="<%= p.stock > 0 ? 'ok' : 'ng' %>">stock: <%= p.stock %></div>
-                        </div>
-                    </article>
                 <% }) %>
-
+                </div>
             </main>
         </div>
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8"/>
+        <title>cart</title>
+        <link rel="stylesheet" href="/public/css/style.css"/>
+    </head>
+    <body>
+        <header>
+            <!-- ナビゲーションリンクをnavタグでグループ化 -->
+            <nav class="header-nav" role="navigation" aria-label="global navigation">
+                <div class="logo">
+                <a href="/">TakahashiYuto's Portfolio</a>
+                </div>
+                <div class="nav-items">
+                <a href="/products">一覧</a>
+                <a href="/cart">カート</a>
+                <a href="/login">ログイン</a>
+                </div>
+            </nav>
+
+        </header>
+        <div class="container">
+        <!-- メインコンテンツ -->
+            <main role="main">
+                <h2>カート</h2>
+                <% if (items.length === 0) {%>
+                    <p class="muted">カートは空です。</p>
+                <% } else { %>
+                    <div class="list">
+                        <% items.forEach(it => { %>
+                            <div class="row">
+                                <div>
+                                    <strong><%= it.product.name %></strong>
+                                    <div class="muted"><%= it.product.price %> × <%= it.qty %></div>
+                                </div>
+                                <div class="right">
+                                    <div>￥<%= it.lineTotal %></div>
+                                    <form action="/cart/remove" method="POST">
+                                        <input type="hidden" name="productId" value="<%= it.product.id %>">
+                                        <button type="submit">削除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <hr />
+                <div class="row">
+                    <div><strong>合計</strong></div>
+                    <div><strong>￥<%= total %></strong></div>
+                </div>
+
+                <div style="margin-top: 12px; display:flex; gap:10px;">
+                    <form action="/checkout" method="POST">
+                        <button type="submit">購入</button>
+                    </form>
+                    <form action="/cart/clear" method="POST">
+                        <button type="submit">カートを空にする</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Yuto Takahashi All Rights Reserved.</p>
+        </footer>
+    </body>
+</html>

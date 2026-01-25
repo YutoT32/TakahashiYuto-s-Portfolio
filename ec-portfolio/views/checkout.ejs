@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8"/>
+        <title>checkout</title>
+        <link rel="stylesheet" href="/public/css/style.css"/>
+    </head>
+    <body>
+        <header>
+            <!-- ナビゲーションリンクをnavタグでグループ化 -->
+            <nav class="header-nav" role="navigation" aria-label="global navigation">
+                <div class="logo">
+                <a href="/">TakahashiYuto's Portfolio</a>
+                </div>
+                <div class="nav-items">
+                <a href="/products">一覧</a>
+                <a href="/cart">カート</a>
+                <a href="/login">ログイン</a>
+                </div>
+            </nav>
+
+        </header>
+        <div class="container">
+        <!-- asideタグでサイドバーを明確化 -->
+            <aside class="sidebar" role="complementary" aria-label="category list">
+                <h3>カテゴリー </h3>
+
+                <!-- JavascriptのforEachでcategoriesを表示 -->
+                <% const categories = [
+                    {id: 1, name: 'Tシャツ'}, 
+                    {id: 2, name: 'ワイシャツ'}, 
+                    {id: 3, name: 'ズボン'}
+                ]; %>
+                <ul>
+                    <% categories.forEach((category) => { %>
+                        <li><%= category.name %></li>
+                    <% }); %>
+                </ul>
+            </aside>
+
+        <!-- メインコンテンツ -->
+            <main role="main">
+                
+            </main>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Yuto Takahashi All Rights Reserved.</p>
+        </footer>
+    </body>
+</html>
