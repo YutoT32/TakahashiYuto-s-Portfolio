@@ -27,7 +27,7 @@ router.get("/cart", async (req, res, next) => {
         const items = [];
         let total = 0;
 
-        for (const [productId, qty] of Object.entruies(cart)) {
+        for (const [productId, qty] of Object.entries(cart)) {
             const product = await findProductById(Number(productId));
             if (!product) continue;
             const lineTotal = product.price * qty;
