@@ -26,12 +26,17 @@ router.get("/cart", async (req, res, next) => {
         const cart = getCart(req);
         const items = [];
         let total = 0;
-
+        
+        // カート内の商品をループ
         for (const [productId, qty] of Object.entries(cart)) {
+            // 商品情報を取得
             const product = await findProductById(Number(productId));
+            // もし商品が存在しなければスキップ
             if (!product) continue;
+            // 小計から合計金額を計算
             const lineTotal = product.price * qty;
             total += lineTotal;
+            // アイテム情報を配列itemsに追加
             items.push({ product, qty, lineTotal });
         }
 
@@ -60,7 +65,7 @@ router.post("/cart/add", async (req, res, next) => {
 });
 
 // カートから商品を削除
-router.post("/cart/clear", (req, res) =>{
+router.post("/cart/remove", (req, res) =>{
     const productId = String(req.body.productId);
     const cart = getCart(req);
     delete cart[productId];
