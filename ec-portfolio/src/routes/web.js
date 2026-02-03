@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { findAllProducts, findProductById } = require("../repositories/productsRepo");
+const { checkout, OutOfStockError } = require("../services/checkoutService");
 
 function getCart(req) {
     if (!req.session.cart) req.session.cart = {};
@@ -42,6 +43,34 @@ router.get("/cart", async (req, res, next) => {
 
         res.render("cart", { items, total });
     } catch (err) {
+        next(err);
+    }
+});
+
+// チェックアウト処理
+router.post("/checkout", async (req, res, next) => {
+    try {
+        const cart = req.session.cart || {};
+        const result = await checkout(cart);
+
+        req.session.cart = {};
+
+        res.render("checkout", {ok: true, result });
+    } catch (err) {
+        if (err instanceof OutOfStockError) {
+            return res.status(409).render("checkout", {
+                ok: false,
+                error: "在庫が足りない商品があります",
+                details: err.details,
+            });
+        }
+        if (String(err.message || "").includes("Cart is empty")) {
+            return res.status(400).render("checkout", {
+                ok: false,
+                error: "カートが空です",
+                details: [],
+            });
+        }
         next(err);
     }
 });

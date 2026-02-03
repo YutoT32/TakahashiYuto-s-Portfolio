@@ -40,7 +40,55 @@
 
         <!-- メインコンテンツ -->
             <main role="main">
-                
+                <% if (ok) { %>
+                    <div class="card">
+                        <h2>✅ 注文完了</h2>
+                        <p class="muted">Order ID: <%= result.orderId %></p>
+
+                        <div class="list">
+                            <% result.items.forEach(it => { %>
+                                <div class="row">
+                                    <div>
+                                        <strong><%= it.name %></strong>
+                                        <div class="muted">￥<%= it.unitPrice %>×<%= it.qty %></div>
+                                    </div>
+                                    <div><strong>￥<%= it.lineTotal %></strong></div>
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <hr />
+                        <div class="row">
+                            <div><strong>合計金額</strong></div>
+                            <div><strong>￥<%= result.totalPrice %></strong></div>
+                        </div>
+
+                        <p>
+                            <a href="/products">買い物を続ける</a>
+                        </p>
+                    </div>
+                <% } else { %>
+                    <div class="card">
+                        <h2>❌ 注文に失敗しました</h2>
+                        <p class="muted"><%= error %></p>
+
+                        <% if (details && details.length > 0) { %>
+                            <h3>在庫不足</h3>
+                            <div class="list">
+                                <% details.forEach(d => { %>
+                                    <div class="row">
+                                        <div><strong><%= d.name %></strong></div>
+                                        <div class="muted">requested: <%= d.requested %> / stock: <%= d.stock %></div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } %>
+
+                        <p>
+                            <a href="/cart">カートに戻る</a>
+                        </p>
+                    </div>
+                <% } %>
             </main>
         </div>
 
