@@ -1,3 +1,5 @@
+// db.js：データベース接続情報・プール設定
+
 const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({

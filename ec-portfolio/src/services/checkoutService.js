@@ -1,3 +1,7 @@
+/*
+checkoutService.js：チェックアウト処理
+*/
+
 const pool = require("../config/db");
 
 class OutOfStockError extends Error {

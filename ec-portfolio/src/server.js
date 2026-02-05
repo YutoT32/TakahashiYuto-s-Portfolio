@@ -1,3 +1,7 @@
+/*
+server.js：サーバー起動設定
+*/
+
 const path = require("path");
 const express = require("express");
 const apiRouter = require("./routes/api");

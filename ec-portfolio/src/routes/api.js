@@ -1,3 +1,7 @@
+/*
+api.js：APIルーティング設定
+*/
+
 const express = require("express");
 const router = express.Router();
 const { findAllProducts } = require("../repositories/productsRepo");

@@ -1,3 +1,7 @@
+/*
+web.js：画面ルーティング設定
+*/
+
 const express = require("express");
 const router = express.Router();
 const { findAllProducts, findProductById } = require("../repositories/productsRepo");
