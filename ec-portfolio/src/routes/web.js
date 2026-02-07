@@ -4,111 +4,29 @@ web.js：画面ルーティング設定
 
 const express = require("express");
 const router = express.Router();
-const { findAllProducts, findProductById } = require("../repositories/productsRepo");
-const { checkout, OutOfStockError } = require("../services/checkoutService");
-
-function getCart(req) {
-    if (!req.session.cart) req.session.cart = {};
-    return req.session.cart;
-}
+const productsController = require("../controllers/productsController");
+const cartController = require("../controllers/cartController");
+const checkoutController = require("../controllers/checkoutController");
 
 // ホームページは /products にリダイレクト
 router.get("/", (req, res) => res.redirect("/products"));
 
 // 商品一覧ページ表示
-router.get("/products", async (req, res, next) => {
-    try {
-        const products = await findAllProducts();
-        res.render("products", { products });
-    } catch (err) {
-        next(err);
-    }
-});
+router.get("/products", productsController.showProducts);
 
 // カートページ表示
-router.get("/cart", async (req, res, next) => {
-    try {
-        const cart = getCart(req);
-        const items = [];
-        let total = 0;
-        
-        // カート内の商品をループ
-        for (const [productId, qty] of Object.entries(cart)) {
-            // 商品情報を取得
-            const product = await findProductById(Number(productId));
-            // もし商品が存在しなければスキップ
-            if (!product) continue;
-            // 小計から合計金額を計算
-            const lineTotal = product.price * qty;
-            total += lineTotal;
-            // アイテム情報を配列itemsに追加
-            items.push({ product, qty, lineTotal });
-        }
-
-        res.render("cart", { items, total });
-    } catch (err) {
-        next(err);
-    }
-});
+router.get("/cart", cartController.showCart);
 
 // チェックアウト処理
-router.post("/checkout", async (req, res, next) => {
-    try {
-        const cart = req.session.cart || {};
-        const result = await checkout(cart);
-
-        req.session.cart = {};
-
-        res.render("checkout", {ok: true, result });
-    } catch (err) {
-        if (err instanceof OutOfStockError) {
-            return res.status(409).render("checkout", {
-                ok: false,
-                error: "在庫が足りない商品があります",
-                details: err.details,
-            });
-        }
-        if (String(err.message || "").includes("Cart is empty")) {
-            return res.status(400).render("checkout", {
-                ok: false,
-                error: "カートが空です",
-                details: [],
-            });
-        }
-        next(err);
-    }
-});
+router.post("/checkout", cartController.checkout);
 
 // カートに商品を追加
-router.post("/cart/add", async (req, res, next) => {
-    try {
-        const productId = Number(req.body.productId);
-        const qty = Math.max(1, Number(req.body.qty || 1));
-
-        const product = await findProductById(productId);
-        if (!product) return res.status(404).send("Product not found");
-
-        const cart = getCart(req);
-        cart[productId] = (cart[productId] || 0) + qty;
-
-        res.redirect("/cart");
-    } catch (err) {
-        next(err);
-    }
-});
+router.post("/cart/add", cartController.addToCart);
 
 // カートから商品を削除
-router.post("/cart/remove", (req, res) =>{
-    const productId = String(req.body.productId);
-    const cart = getCart(req);
-    delete cart[productId];
-    res.redirect("/cart");
-});
+router.post("/cart/remove", cartController.removeFromCart);
 
 // カートを空にする
-router.post("/cart/clear", (req, res) => {
-    req.session.cart = {};
-    res.redirect("/cart");
-});
+router.post("/cart/clear", checkoutController.clearCart);
 
 module.exports = router;

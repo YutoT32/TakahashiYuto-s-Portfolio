@@ -2,50 +2,10 @@
 server.js：サーバー起動設定
 */
 
-const path = require("path");
-const express = require("express");
-const apiRouter = require("./routes/api");
-const webRouter = require("./routes/web");
-const { errorHandler } = require("./middlewares/errorHandler");
-const session = require("express-session");
-
-const app = express();
+const app = require("./app");
 
 // ポート設定（指定がなければ3000）
 const PORT = process.env.PORT || 3000;
-
-// ミドルウェア設定
-// ボディパーサー設定
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// セッション設定
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "change-me",
-        resave: false,
-        saveUninitialized: false,
-    })
-);
-
-// ビューエンジン設定
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "..", "views"));
-app.use("/public", express.static(path.join(__dirname, "..", "public")));
-
-// ヘルスチェック
-app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
-});
-
-// Web
-app.use("/", webRouter);
-
-// API
-app.use("/api", apiRouter);
-
-// error handler (Last)
-app.use(errorHandler);
 
 // ポート番号${PORT}でサーバー起動
 app.listen(PORT, () => {
