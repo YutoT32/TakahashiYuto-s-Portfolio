@@ -18,7 +18,7 @@ router.get("/products", productsController.showProducts);
 router.get("/cart", cartController.showCart);
 
 // チェックアウト処理
-router.post("/checkout", cartController.checkout);
+router.post("/checkout", checkoutController.checkout);
 
 // カートに商品を追加
 router.post("/cart/add", cartController.addToCart);
@@ -27,6 +27,6 @@ router.post("/cart/add", cartController.addToCart);
 router.post("/cart/remove", cartController.removeFromCart);
 
 // カートを空にする
-router.post("/cart/clear", checkoutController.clearCart);
+router.post("/cart/clear", cartController.clearCart);
 
 module.exports = router;

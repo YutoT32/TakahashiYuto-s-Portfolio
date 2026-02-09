@@ -37,3 +37,5 @@ app.use("/api", apiRouter);
 
 // error handler (Last)
 app.use(errorHandler);
+
+module.exports = app;

@@ -1,60 +1,28 @@
-const { findAllProducts } = require("../repositories/productsRepo");
+const { checkout, OutOfStockError } = require("../services/checkoutService");
 
-function getCart(req) {
-    if (!req.session.cart) req.session.cart = [];
-    return req.session.cart;
-}
-
-exports.showCart = async (req, res, next) => {
+exports.checkout = async (req, res, next) => {
     try {
-        const cart = getCart(req);
-        const items = [];
-        let total =0;
+        const cart = req.session.cart || {};
+        const result = await checkout(cart);
 
-        // カート内の商品をループ
-        for (const [productId, qty] of Object.entries(cart)) {
-            // 商品情報を取得
-            const product = await findProductById(Number(productId));
-            // もし商品が存在しなければスキップ
-            if (!product) continue;
-            // 小計から合計金額を計算
-            const lineTotal = product.price * qty;
-            total += lineTotal;
-            // アイテム情報を配列itemsに追加
-            items.push({ product, qty, lineTotal });
+        req.session.cart = {};
+
+        res.render("checkout", {ok: true, result });
+    } catch (err) {
+        if (err instanceof OutOfStockError) {
+            return res.status(409).render("checkout", {
+                ok: false,
+                error: "在庫が足りない商品があります",
+                details: err.details,
+            });
         }
-
-        res.render("cart", { items, total });
-    } catch (err) {
+        if (String(err.message || "").includes("Cart is empty")) {
+            return res.status(400).render("checkout", {
+                ok: false,
+                error: "カートが空です",
+                details: [],
+            });
+        }
         next(err);
     }
-};
-
-exports.addToCart = async (req, res, next) => {
-        try {
-        const productId = Number(req.body.productId);
-        const qty = Math.max(1, Number(req.body.qty || 1));
-
-        const product = await findProductById(productId);
-        if (!product) return res.status(404).send("Product not found");
-
-        const cart = getCart(req);
-        cart[productId] = (cart[productId] || 0) + qty;
-
-        res.redirect("/cart");
-    } catch (err) {
-        next(err);
-    }
-};
-
-exports.removeFromCart = (req, res) => {
-    const productId = String(req.body.productId);
-    const cart = getCart(req);
-    delete cart[productId];
-    res.redirect("/cart");
-};
-
-exports.clearCart = (req, res) => {
-    req.session.cart = {};
-    res.redirect("/cart");
 };
